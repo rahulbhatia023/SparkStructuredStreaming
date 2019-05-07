@@ -5,6 +5,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.api.java.UDF0;
 import org.apache.spark.sql.streaming.StreamingQueryException;
+import org.apache.spark.sql.streaming.Trigger;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
@@ -49,6 +50,12 @@ public class UDFMimicEventTime {
                 .outputMode("append")
                 .format("console")
                 .option("truncate", "false")
+                /*
+                we have explicitly specified a processing time trigger.
+                We want to process the input stream every 5 seconds.
+                This trigger determines how often the processing of the input stream will take place.
+                 */
+                .trigger(Trigger.ProcessingTime("5 seconds"))
                 .start()
                 .awaitTermination();
     }
