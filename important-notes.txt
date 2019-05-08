@@ -42,3 +42,36 @@ Global Window
 -------------
 If you consider data accumulated across the stream as a whole from the very beginning of time, that is a global window.
 
+
+Event, Ingestion, and Processing Time
+=====================================
+When you're working with streaming data, unlike with batch processing, the notion of time becomes very important
+because generally when you perform aggregations on streaming data, you use windows, and windows are generally based on time.
+Tumbling, as well as sliding windows, consider all the entities in a fixed interval of time.
+
+There are different notions of time that can apply to entities in a stream.
+There is the event time, the time at which the event originally occurred; there is the ingestion time, the time at which the event came to Spark;
+and there is the processing time, the time at which the data was processed by Spark.
+
+Event Time
+----------
+Event time refers to the time at which the event occurred at its original source. The original source could be anything in streaming data.
+It could be the mobile phone that sends out GPS coordinates, the sensor which collects climate data, the website which sends out log messages.
+Event time is generally embedded as a part of the streaming data. Event time is something that is known at the source, not during Spark processing.
+Event time allows us to order the data so that the streaming data appears in the right order.
+It allows us to get correct results even if a particular data point appears out of order or late.
+
+Ingestion Time
+--------------
+Ingestion time is the time at which a particular streaming entity enters the Spark application via some kind of source.
+This is a timestamp that may be assigned by the Spark system and is chronologically after the event time,
+which means ingestion time cannot be used to order out of order events.
+
+
+Processing Time
+---------------
+Processing time refers to when the system actually processes the streaming entities. This is the system time when processing starts.
+This is chronologically after the event time and the ingestion time, and is non-deterministic.
+It depends on when the data arrives, how long the processing of the data takes, and so on.
+Processing time tends to be the simplest time to work with because there is no coordination required between the origin of the streams and
+the actual processing.
