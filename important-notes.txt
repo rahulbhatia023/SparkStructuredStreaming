@@ -1,0 +1,44 @@
+Stateful Window Operations
+==========================
+There are two kinds of operations that we can perform on streaming data typically:
+
+1. Stateless operations - are transformations which are applied on a single stream entity, a single record.
+
+2. Stateful operations - consider multiple streaming entities at the same time. These are transformations which accumulate
+   across these multiple entities.
+
+A lot of stream processing involves using window operations. Windows are when we want to accumulate information across a particular window of time
+in a stream. Window transformations are a way to operate on a subset of the streaming data.
+Spark supports window operations based on a certain time interval; that means transformations can be applied on all entities within a time window,
+and the kind of transformations can be sum, min, max, average; any aggregation.
+
+
+Tumbling, Sliding and Global Windows
+====================================
+Spark supports the tumbling, sliding, and the global window.
+Let's assume that we have a stream of data. The different entities in our streaming data come in over a period of time.
+That means every entity is at a different timestamp.
+
+Tumbling Window
+---------------
+The tumbling window is a window which is a fixed interval of time. The window size is fixed. In tumbling windows, time is non-overlapping.
+That means a particular streaming entity can belong to just one window. The time interval that defines a tumbling window is fixed,
+but the number of entities within a window can differ. So if you have a lot of entities come in at a particular point in time,
+such as error messages from your website logs, there will be many entities at a particular fixed interval of time when the error occurs.
+The tumbling window is so called because it tumbles over the streaming data in a non-overlapping manner.
+No streaming entity is part of more than one window in a tumbling window.
+
+Sliding Window
+--------------
+The sliding window, once again, has a fixed window size, which is based on the window interval.
+Sliding windows differ from tumbling windows in the fact that consecutive windows are overlapping in time.
+This overlap period is defined as the sliding interval. Once again, as in the case of tumbling windows, the number of streaming entities
+within a window will defer based on how many entities came in in a particular interval of time.
+When you use a sliding window, a particular entity can belong to more than one window.
+As the window slides over, one or more streaming entities can belong to consecutive windows.
+Sliding windows tend to be the most commonly used kind of windows because they are great for showing how trends gradually change over time.
+
+Global Window
+-------------
+If you consider data accumulated across the stream as a whole from the very beginning of time, that is a global window.
+
