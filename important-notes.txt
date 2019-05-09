@@ -75,3 +75,34 @@ This is chronologically after the event time and the ingestion time, and is non-
 It depends on when the data arrives, how long the processing of the data takes, and so on.
 Processing time tends to be the simplest time to work with because there is no coordination required between the origin of the streams and
 the actual processing.
+
+
+Watermarks and Late Data
+========================
+Handling late arriving events is a crucial functionality for Stream Processing Engines. A solution to this problem is the concept of watermarking.
+Watermarking is a useful method which helps a Stream Processing Engine to deal with lateness.
+Basically, a watermark is a threshold to specify how long the system waits for late events.
+If an arriving event lies within the watermark, it gets used to update a query.
+Otherwise, if it’s older than the watermark, it will be dropped and not further processed by the Streaming Engine.
+
+In distributed and networked systems, there’s always a chance for disruption — nodes going down, sensors are loosing connection and so on.
+Because of that, it’s not guaranteed that data will arrive in a Stream Processing Engine in the order they were created.
+For the sake of fault tolerance it’s therefore necessary to handle such Out-of-Order data.
+
+You can enable watermark by simply adding the withWatermark() operator to a query:
+
+"withWatermark(eventTimeColumn: String, delayThreshold: String): Dataset[T]"
+
+It takes two Parameters:
+a) an event time column (must be the same as the aggregate is working on.
+b) a threshold to specify for how long late data should be processed (in event time unit).
+
+The state of an aggregate will then be maintained by Spark until "(MaxEventTime — delayThreshold) > T" ,
+where MaxEventTime is the latest event time seen by the engine and T is the starting time of a window.
+
+If late data fall within this threshold, the query gets updated eventually.
+Otherwise it gets dropped and no reprocessing is triggered.
+
+It’s important to mention that the output mode of the query must be set either to "append" (which is the default) or "update”.
+Complete-mode can’t be used in conjunction with watermarking by design, because it requires all the data to be preserved
+for outputting the whole result table to a sink.

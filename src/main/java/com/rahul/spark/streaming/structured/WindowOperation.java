@@ -45,8 +45,11 @@ public class WindowOperation {
 
         Dataset<Row> fileStreamWithTimestampDF = fileStreamDF.withColumn("timestamp", callUDF("add_timestamp"));
 
-        Dataset<Row> windowedCounts = fileStreamWithTimestampDF.groupBy(
-                window(fileStreamWithTimestampDF.col("timestamp"), "30 seconds", "18 seconds")).count();
+        Dataset<Row> windowedCounts = fileStreamWithTimestampDF.withWatermark("timestamp", "5 seconds")
+                .groupBy(
+                        window(fileStreamWithTimestampDF.col("timestamp"), "30 seconds", "18 seconds")
+                )
+                .count();
 
         windowedCounts.writeStream()
                 .outputMode("complete")
